@@ -63,7 +63,6 @@ export type Store<T extends ZodSchema> = {
     trash: (key: string) => PromiseUnwrap<boolean, "E">,
     // Clears DB.
     purge:  () => PromiseUnwrap<true, "E">,
-    schema: 
 }
 
 const store = <T extends ZodSchema>(connection: ReturnType<DatabaseDriver<any>>, table: string, schema: T): Store<T> => {
