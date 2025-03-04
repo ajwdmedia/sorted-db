@@ -1,6 +1,7 @@
 // Reexport your entry components here
 import { z, type ZodSchema, type infer } from "zod";
-import type { DatabaseDriver } from "./types.js"
+import type { Configuration, DatabaseDriver } from "./types.js"
+import type { Handle } from "@sveltejs/kit";
 
 const t = {
     array: z.array,
@@ -111,4 +112,18 @@ export const setup = <X = any>(options: {
     }
 
     return dbs;
+}
+
+export const sorted = (config: Configuration): Handle => {
+    const auth = {};
+    const perms = {};
+    const db = {};
+
+
+    return async ({ event, resolve }) => {
+        event.locals.auth = auth;
+        event.locals.perms = perms;
+        event.locals.db = db;
+        return resolve(event);
+    }
 }

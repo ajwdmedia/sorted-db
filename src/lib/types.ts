@@ -13,36 +13,39 @@ export type AuthMethod = {
 
 }
 
+export type Table = {
+    id_generator?: () => string,
+    schema: any,
+}
+
 export type Configuration = {
-    database: {
+    db?: {
         driver: DatabaseDriver<any>,
+        tables: Record<string, Table>,
     },
-    auth: {
-        methods: AuthMethod[],
+    auth?: {
+        methods: Record<string, AuthMethod>,
         tokens?: {} | false,
-        tables?: {
-            users: string,
-            permissions: string,
-        },
         user_data: any,
-        id_generator: () => any,
+        id_generator?: () => string,
     },
-    perms: {
+    perms?: {
         scopes: [],
         roles: Record<string, string[]>,
     }
 }
 
-export type HookMethods = {
+export type Locals = {
     auth: {
-        authorize: () => any;
-        login: (method: string, requirements: any) => any;
+        session: () => any;
+        user: () => any;
+        methods: {}
         issueToken: () => any;
         revokeToken: () => any;
-        manuallyLogin: () => any;
+        manuallyLogin: (user: string) => any;
     },
     perms: {
         hasPermission: () => any;
-
+        editPermissions: () => any;
     }
 }
