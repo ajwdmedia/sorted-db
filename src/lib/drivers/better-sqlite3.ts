@@ -13,7 +13,7 @@ export const driver: DatabaseDriver<SQLiteOptions> = (options) => {
         },
         all: async (table) => {
             const prep = database.prepare<{ ID: string, json: string }>(`SELECT * FROM ${table}`);
-            return prep.all().map(row => ({ id: row.ID, value: JSON.parse(row.json) }))
+            return prep.all({}).map(row => ({ id: row.ID, value: JSON.parse(row.json) }))
         },
         get: async (table, key) => {
             const value = (await database.prepare(`SELECT json FROM ${table} WHERE ID = @key`).get({key}));
