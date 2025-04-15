@@ -1,4 +1,4 @@
-import sqlite3, { Database } from "better-sqlite3";
+import sqlite3 from "better-sqlite3";
 import type { DatabaseDriver } from "$lib/types.js";
 export type SQLiteOptions = {
     path: string;

@@ -1,13 +1,14 @@
 type SchemaBase<T, F = false, X = {}> = {
+    db: string | null,
     flat: F,
     validate(input: unknown): T,
     safe(input: unknown): [ T, null ] | [ null, Error ],
-} & X
+} & X;
 
 const safety = <T>(z: SchemaBase<T>["validate"]): (input: unknown) => [ T, null ] | [ null, Error ] => {
     return (input: unknown) => {
         try {
-            return [ z(input), null ]
+            return [ z(input), null ];
         } catch (e) {
             return [ null, e as Error ];
         }
@@ -25,6 +26,7 @@ export const optional = <T>(params: SchemaBase<T, any>): SchemaBase<T | undefine
         }
     }
     return {
+        db: null,
         flat: params.flat,
         validate: v,
         safe: safety(v),
@@ -38,6 +40,7 @@ export const string = (): SchemaBase<string, true> => {
         return input;
     }
     return {
+        db: "str",
         flat: true,
         validate: v,
         safe: safety(v),
@@ -59,6 +62,7 @@ export const object = <T extends {[X: string]: SchemaBase<any, any>}>(params: T)
     }
 
     return {
+        db: null,
         flat: false,
         validate: v,
         safe: safety(v),
