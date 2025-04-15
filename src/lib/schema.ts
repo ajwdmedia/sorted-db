@@ -15,9 +15,27 @@ const safety = <T>(z: SchemaBase<T>["validate"]): (input: unknown) => [ T, null 
     }
 }
 
-export const optional = <T>(params: SchemaBase<T, any>): SchemaBase<T | undefined | null> => {
+export const optional = <T>(params: SchemaBase<T, any>): SchemaBase<T | undefined> => {
     function v(input: unknown) {
-        if (!input) return undefined;
+        if (input === undefined) return undefined;
+        if (input === null) throw new Error("Param is optional, got null")
+        try {
+            return params.validate(input);
+        } catch (e) {
+            throw e;
+        }
+    }
+    return {
+        db: "",
+        flat: params.flat,
+        validate: v,
+        safe: safety(v),
+    }
+} 
+
+export const nullable = <T>(params: SchemaBase<T, any>): SchemaBase<T | null> => {
+    function v(input: unknown) {
+        if (input === undefined) throw new Error("Param is undefined");
         if (input === null) return null;
         try {
             return params.validate(input);
@@ -33,10 +51,33 @@ export const optional = <T>(params: SchemaBase<T, any>): SchemaBase<T | undefine
     }
 } 
 
-export const string = (): SchemaBase<string, true> => {
+
+export const number = (...checks: ((num: number) => true | string)[]): SchemaBase<number, true> => {
     function v(input: unknown) {
-        if (!input) throw new Error("Object is Falsy");
+        if (input === undefined || input === null) throw new Error("Input is missing");
+        if (typeof input !== "number") throw new Error("Not a Number");
+        for (let check of checks) {
+            const res = check(input);
+            if (typeof res === "string") throw new Error(res);
+        }
+        return input;
+    }
+    return {
+        db: null,
+        flat: true,
+        validate: v,
+        safe: safety(v),
+    }
+}
+
+export const string = (...checks: ((str: string) => true | string)[]): SchemaBase<string, true> => {
+    function v(input: unknown) {
+        if (input === undefined || input === null) throw new Error("Input is missing");
         if (typeof input !== "string") throw new Error("Not a String");
+        for (let check of checks) {
+            const res = check(input);
+            if (typeof res === "string") throw new Error(res);
+        }
         return input;
     }
     return {
@@ -49,7 +90,7 @@ export const string = (): SchemaBase<string, true> => {
 
 export const object = <T extends {[X: string]: SchemaBase<any, any>}>(params: T): SchemaBase<{[ X in keyof T ]: ReturnType<T[X]["validate"]>}> => {
     function v(input: unknown) {
-        if (!input) throw new Error("Object is Falsy");
+        if (input === undefined || input === null) throw new Error("Object is missing");
         if (typeof input !== "object") throw new Error("Not an Object");
         try {
             for (let friend in params) {
