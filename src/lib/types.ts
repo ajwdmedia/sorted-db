@@ -1,3 +1,4 @@
+import type { SchemaBase } from "./schema/index.js";
 
 export type DatabaseDriver<T> = (options: T) => {
     prepare: (table: string) => Promise<void>;
@@ -13,10 +14,17 @@ export type AuthMethod = {
 
 }
 
-export type Table = {
+export type StructuredTableConfig<T> = {
     id_generator?: () => string,
-    schema: any,
-}
+    type: "structured",
+    schema: SchemaBase<T, true>,
+};
+
+export type DocumentTableConfig<T> = {
+    id_generator?: () => string,
+    type: "document",
+    schema: SchemaBase<T, any>,
+};
 
 export type Configuration = {
     db?: {
