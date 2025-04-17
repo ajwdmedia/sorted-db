@@ -28,6 +28,11 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
+		},
+		"./schema": {
+			"types": "./dist/schema.d.ts",
+			"svelte": "./dist/schema.js",
+			"import": "./dist/schema.js"
 		}
 	},
 	"peerDependencies": {
