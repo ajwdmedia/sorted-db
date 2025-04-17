@@ -1,14 +1,5 @@
-import type { SchemaBase } from "./schema/index.js";
-
-export type DatabaseDriver<T> = (options: T) => {
-    prepare: (table: string) => Promise<void>;
-    all:     (table: string) => Promise<{ id: string, value: unknown }[]>;
-    get:     (table: string, key: string) => Promise<{ id: string, value: unknown } | null>;
-    insert:  (table: string, key: string, value: any) => Promise<{ id: string, value: unknown }>;
-    update:  (table: string, key: string, value: any) => Promise<{ id: string, value: unknown }>;
-    delete:  (table: string, key: string) => Promise<number>;
-    purge:   (table: string) => Promise<number>;
-}
+import type { DatabaseDriver } from "./drivers.js";
+import type { SchemaBase } from "./schema.js";
 
 export type AuthMethod = {
 
@@ -26,20 +17,13 @@ export type DocumentTableConfig<T> = {
     schema: SchemaBase<T, any>,
 };
 
-export type Configuration = {
+export type Configuration<Tables extends Record<string, StructuredTableConfig<any> | DocumentTableConfig<any>> = {}, Scopes extends string[] = string[]> = {
     db?: {
-        driver: DatabaseDriver<any>,
-        tables: Record<string, Table>,
-    },
-    auth?: {
-        methods: Record<string, AuthMethod>,
-        tokens?: {} | false,
-        user_data: any,
-        id_generator?: () => string,
+        driver: Awaited<ReturnType<DatabaseDriver<any>>>,
+        tables: Tables,
     },
     perms?: {
-        scopes: [],
-        roles: Record<string, string[]>,
+        scopes: Scopes,
     }
 }
 
@@ -47,7 +31,6 @@ export type Locals = {
     auth: {
         session: () => any;
         user: () => any;
-        methods: {}
         issueToken: () => any;
         revokeToken: () => any;
         manuallyLogin: (user: string) => any;

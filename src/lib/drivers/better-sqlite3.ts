@@ -1,13 +1,16 @@
 import sqlite3 from "better-sqlite3";
-import type { DatabaseDriver } from "$lib/types.js";
+import type { DatabaseDriver } from "../drivers.js";
 export type SQLiteOptions = {
     path: string;
 }
 
-export const driver: DatabaseDriver<SQLiteOptions> = (options) => {
+export const driver: DatabaseDriver<SQLiteOptions> = async (options) => {
     const database = sqlite3(options.path);
 
     return {
+        introspect: async () => {
+
+        },
         prepare: async (table) => {
             database.exec(`CREATE TABLE IF NOT EXISTS ${table} (ID TEXT PRIMARY KEY, json TEXT)`);
         },

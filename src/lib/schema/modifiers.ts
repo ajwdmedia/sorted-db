@@ -5,7 +5,7 @@ export const maybe = <T>(params: SchemaBase<T, any>): SchemaBase<T | undefined |
         if (input === undefined) return undefined;
         if (input === null) return null;
         try {
-            return params.validate(input);
+            return params.check(input);
         } catch (e) {
             throw e;
         }
@@ -13,7 +13,7 @@ export const maybe = <T>(params: SchemaBase<T, any>): SchemaBase<T | undefined |
     return {
         db: null,
         flat: params.flat,
-        validate: v,
+        check: v,
         safe: safety(v),
     }
 } 
@@ -23,7 +23,7 @@ export const optional = <T>(params: SchemaBase<T, any>): SchemaBase<T | undefine
         if (input === undefined) return undefined;
         if (input === null) throw new Error("Param is optional, got null")
         try {
-            return params.validate(input);
+            return params.check(input);
         } catch (e) {
             throw e;
         }
@@ -31,7 +31,7 @@ export const optional = <T>(params: SchemaBase<T, any>): SchemaBase<T | undefine
     return {
         db: null,
         flat: params.flat,
-        validate: v,
+        check: v,
         safe: safety(v),
     }
 } 
@@ -41,7 +41,7 @@ export const nullable = <T>(params: SchemaBase<T, any>): SchemaBase<T | null> =>
         if (input === undefined) throw new Error("Param is undefined");
         if (input === null) return null;
         try {
-            return params.validate(input);
+            return params.check(input);
         } catch (e) {
             throw e;
         }
@@ -49,7 +49,7 @@ export const nullable = <T>(params: SchemaBase<T, any>): SchemaBase<T | null> =>
     return {
         db: params.db ? Object.assign({}, params.db, { nullable: true }) : null,
         flat: params.flat,
-        validate: v,
+        check: v,
         safe: safety(v),
     }
 } 
