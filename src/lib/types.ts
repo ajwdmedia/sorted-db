@@ -6,15 +6,15 @@ export type AuthMethod = {
 }
 
 export type StructuredTableConfig<T> = {
-    id_generator?: () => string,
     type: "structured",
     schema: SchemaBase<T, true>,
+    id_generator?: () => string,
 };
 
 export type DocumentTableConfig<T> = {
-    id_generator?: () => string,
     type: "document",
     schema: SchemaBase<T, any>,
+    id_generator?: () => string,
 };
 
 export type Configuration<Tables extends Record<string, StructuredTableConfig<any> | DocumentTableConfig<any>> = {}, Scopes extends string[] = string[]> = {

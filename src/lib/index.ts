@@ -8,7 +8,11 @@ export const sorted = <Tables extends Record<string, StructuredTableConfig<any> 
     const db = {};
 
     
-
+    if (config.db) {
+        config.db.driver.introspect();
+        config.db.driver.schema(config.db.tables);
+        config.db.driver.introspect();
+    }
 
     return async ({ event, resolve }) => {
         event.locals.auth = auth;

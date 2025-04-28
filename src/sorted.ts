@@ -9,9 +9,14 @@ const user = s.structured({
 
 const config = {
     db: {
-        driver: await betterSqlite3({ path: "~/db.sqlite" }),
+        driver: await betterSqlite3({ path: "./sqlite.db" }),
         tables: {
-
+            "test": {
+                type: "document" as const,
+                schema: s.object({
+                    "name": s.string()
+                })
+            }
         }
     },
     perms: {
